@@ -29,7 +29,6 @@ const wallets = [
   "Zapper",
   "Rarible",
   "SushiSwap",
-  "1inch",
 ]
 
 export default function WalletSelection({ onWalletSelect }) {

